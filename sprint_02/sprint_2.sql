@@ -110,25 +110,22 @@ ORDER BY company_id;
 -- NIVELL 3
 -- Exercici 1
 -- Presenta el nom, telèfon, país, data i amount, d'aquelles empreses que van realitzar transaccions amb un valor comprès entre 100 i 200 euros i en alguna d'aquestes dates: 29 d'abril del 2021, 20 de juliol del 2021 i 13 de març del 2022. Ordena els resultats de major a menor quantitat.
-SELECT company_name, phone, country, DATE(timestamp) as fecha, amount
+SELECT company.company_name, company.phone, company.country, DATE(transaction.timestamp) AS fecha, transaction.amount
 FROM company
-INNER JOIN transaction
-ON company.id = transaction.company_id
-WHERE DATE(timestamp) IN ('2021-04-29', '2021-07-20', '2022-03-13')
-GROUP BY company_name, phone, country, DATE(timestamp), amount
-HAVING amount BETWEEN 100 AND 200
-ORDER BY amount DESC;
+INNER JOIN transaction ON company.id = transaction.company_id
+WHERE transaction.amount BETWEEN 100 AND 200 AND DATE(transaction.timestamp) IN ('2021-04-29', '2021-07-20', '2022-03-13')
+ORDER BY transaction.amount DESC;
 
 -- Exercici 2
 -- Necessitem optimitzar l'assignació dels recursos i dependrà de la capacitat operativa que es requereixi, per la qual cosa et demanen la informació sobre la quantitat de transaccions que realitzen les empreses, però el departament de recursos humans és exigent i vol un llistat de les empreses on especifiquis si tenen més de 4 transaccions o menys.
-SELECT company_name,
-    CASE 
-        WHEN COUNT(transaction.id) > 4 THEN 'Más de 4'
-        ELSE 'Menos de 4'
-    END AS cantidad_transacciones
+SELECT company.company_name,
+  CASE 
+    WHEN COUNT(transaction.id) > 4 THEN 'Más de 4'
+    ELSE 'Menos de 4'
+  END AS cantidad_transacciones
 FROM company
 LEFT JOIN transaction ON company.id = transaction.company_id
-GROUP BY company_name
+GROUP BY company.id, company.company_name
 ORDER BY cantidad_transacciones;
 
 
