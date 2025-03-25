@@ -104,10 +104,10 @@ SELECT company_name, company.phone, company.country, AVG(amount) as media_compra
 FROM company
 INNER JOIN transaction
 ON company.id = transaction.company_id
-GROUP BY company_name, company.phone, company.country
-ORDER BY media_compra DESC;
+GROUP BY company_name, company.phone, company.country;
 
-SELECT * FROM VistaMarketing;
+SELECT * FROM VistaMarketing
+ORDER BY media_compra DESC;
 
 -- Ejercicio 3
 -- Filtrar la vista VistaMarketing per a mostrar las compañías en "Germany"
@@ -181,15 +181,15 @@ ALTER TABLE transaction ADD FOREIGN KEY (user_id) REFERENCES data_user(id);
 -- Crear VIEW: "InformeTecnico" 
 CREATE VIEW InformeTecnico AS
 SELECT transaction.id AS transaccion, CONCAT(data_user.name, " ", surname) AS usuario, 
-company_name AS empresa, iban, declined AS declinada, SUM(amount) AS total_compras  
+company_name AS empresa, iban, declined AS declinada, amount  
 FROM transaction
 INNER JOIN data_user ON transaction.user_id = data_user.id
 INNER JOIN credit_card ON transaction.credit_card_id = credit_card.id
 INNER JOIN company ON transaction.company_id = company.id
-GROUP BY transaccion
-ORDER BY transaction.id DESC;
+GROUP BY transaccion;
 
-SELECT * FROM InformeTecnico;
+SELECT * FROM InformeTecnico
+ORDER BY transaction.id DESC;
 
 DROP VIEW InformeTecnico;
 
