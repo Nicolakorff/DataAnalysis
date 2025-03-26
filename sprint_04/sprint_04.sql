@@ -329,14 +329,6 @@ WHERE transactions.declined = 0
 GROUP BY product_id
 ORDER BY cantidad_ventas DESC;
 
-SELECT products.id, products.product_name, COUNT(orders.product_id) AS cantidad_ventas
-FROM orders
-JOIN products ON orders.product_id = products.id
-JOIN transactions ON orders.id = transactions.order_id
-WHERE transactions.declined = 0
-GROUP BY products.id
-ORDER BY cantidad_ventas DESC;
-
 
 
     
