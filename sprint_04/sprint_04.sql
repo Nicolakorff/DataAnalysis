@@ -268,6 +268,28 @@ SELECT id,
     CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(product_ids, ',', 4), ',', -1) AS UNSIGNED) AS product_id4
 FROM orders;
 
+-- Corrección: este código funciona si se tiene siempre la misma cantidad de valores en un mismo campo.
+-- En caso de tener menor cantidad de número falsea los datos rellenando los faltantes duplicando el último valor. 
+-- El código correcto en este caso sería:
+
+INSERT INTO temp_orders (id, product_id1, product_id2, product_id3, product_id4)
+SELECT id,
+    CAST(NULLIF(SUBSTRING_INDEX(product_ids, ',', 1), '') AS UNSIGNED) AS product_id1,
+    CAST(NULLIF(IF(LENGTH(product_ids) - LENGTH(REPLACE(product_ids, ',', '')) >= 1, 
+           SUBSTRING_INDEX(SUBSTRING_INDEX(product_ids, ',', 2), ',', -1), NULL), '') 
+           AS UNSIGNED) AS product_id2,
+    CAST(NULLIF(IF(LENGTH(product_ids) - LENGTH(REPLACE(product_ids, ',', '')) >= 2, 
+           SUBSTRING_INDEX(SUBSTRING_INDEX(product_ids, ',', 3), ',', -1), NULL), '') 
+           AS UNSIGNED) AS product_id3,
+    CAST(NULLIF(IF(LENGTH(product_ids) - LENGTH(REPLACE(product_ids, ',', '')) >= 3, 
+           SUBSTRING_INDEX(SUBSTRING_INDEX(product_ids, ',', 4), ',', -1), NULL), '') 
+           AS UNSIGNED) AS product_id4
+FROM orders;
+
+-- Aunque lo ideal es utilizar FIND_IN_SET. Consume muchos menos recursos y es un código más sencillo, elegante y útil. 
+-- Ver sprint_04_v2
+
+
 SELECT * FROM temp_orders;
 
 -- Una vez resuelta la separación de los valores, traspasamos los datos de la tabla temp_orders a  trasp_order respetando sus ids. 
